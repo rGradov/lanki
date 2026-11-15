@@ -12,8 +12,15 @@ Everything below is done **once**, except the per-release steps.
 ### 1. GitHub repo (this repo is also the Homebrew tap)
 
 - Push this repo to `github.com/rGradov/lanki`.
-- The cask lives at `Casks/lanki.rb` in this repo, so users install with
-  `brew tap rGradov/lanki && brew install --cask lanki`. No separate tap repo or
+- The cask lives at `Casks/lanki.rb` in this repo. Users install with:
+  ```bash
+  brew tap rGradov/lanki https://github.com/rGradov/lanki.git
+  brew trust rGradov/lanki
+  brew install --cask lanki
+  ```
+  The explicit URL is required because `brew tap rGradov/lanki` alone looks for
+  a repo named `homebrew-lanki` (Homebrew prepends `homebrew-`); and Homebrew 7
+  requires an explicit `brew trust` for third-party taps. No separate repo or
   secret is needed — `update-cask.yml` commits back to this repo using its own
   `GITHUB_TOKEN` (it has `contents: write`).
 

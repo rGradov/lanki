@@ -9,7 +9,7 @@ cask "lanki" do
   desc "Native macOS menu-bar language-learning assistant"
   homepage "https://github.com/rGradov/lanki"
 
-  depends_on macos: ">= :sonoma"
+  depends_on macos: :sonoma
 
   app "Lanki.app"
 
