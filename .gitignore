@@ -1,0 +1,27 @@
+# Build output
+.build/
+build/
+DerivedData/
+
+# A built app bundle copied to the repo root (never commit binaries).
+Lanki.app/
+
+# Sparkle signing keys — the private key must never leave this machine.
+*.pem
+*.priv.pem
+Keys/
+sign_update
+generate_appcast
+generate_keys
+
+# Local signing / export config (holds team id + certificate; machine-local).
+*.xcconfig
+ExportOptions.plist
+
+# Xcode user state
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+
+# macOS
+.DS_Store
