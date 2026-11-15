@@ -1,5 +1,5 @@
 cask "lanki" do
-  version "1.0.0"
+  version "2.0.0"
   # Regenerate on every release: `shasum -a 256 Lankiv<version>.dmg`.
   # The `update-cask.yml` workflow overwrites this automatically on release.
   sha256 "0000000000000000000000000000000000000000000000000000000000000000"
