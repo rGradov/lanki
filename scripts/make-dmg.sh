@@ -15,6 +15,9 @@ set -euo pipefail
 
 VERSION="${1:?Usage: ./scripts/make-dmg.sh <version> [path-to-Lanki.app]}"
 APP="${2:-/tmp/lanki-release/Lanki.app}"
+# Resolve to an absolute path so `defaults read` and `codesign` work no matter
+# how the script is invoked (a relative path makes `defaults read` fail).
+APP="$(cd "$(dirname "$APP")" && pwd)/$(basename "$APP")"
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
@@ -67,7 +70,11 @@ echo "==> Verifying the exported app is signed"
 codesign --verify --deep --strict "$APP"
 # A release must be signed with a Developer ID certificate, not an
 # "Apple Development" cert, or notarization and Gatekeeper reject it.
-codesign -dv --verbose=4 "$APP" 2>&1 | grep -q "Authority=Developer ID Application" \
+# Capture first: piping straight into `grep -q` lets grep exit after its first
+# match and SIGPIPE codesign, which pipefail then reads as a failed check even
+# though the right authority was right there in the output.
+signing_info="$(codesign -dv --verbose=4 "$APP" 2>&1)"
+echo "$signing_info" | grep -q "Authority=Developer ID Application" \
   || { echo "App is not signed with a 'Developer ID Application' certificate." >&2
        echo "Archive with CODE_SIGN_IDENTITY=\"$IDENTITY\" (see RELEASE.md)." >&2
        exit 1; }
