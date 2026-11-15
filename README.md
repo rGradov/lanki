@@ -38,12 +38,13 @@ Built with **SwiftUI + AppKit**. No Electron, no Flutter.
 ### With Homebrew (recommended)
 
 ```bash
-brew tap rGradov/homebrew-tap
+brew tap rGradov/lanki
 brew install --cask lanki
 ```
 
-Homebrew verifies the download checksum for you. See `homebrew/README.md` for
-the one-time tap setup.
+The cask lives in this repo (`Casks/lanki.rb`) and updates itself on every
+release via the `update-cask.yml` workflow. Homebrew verifies the download
+checksum for you.
 
 ### Manually
 

@@ -1,19 +1,21 @@
 # Releasing Lanki
 
 Lanki updates itself through [Sparkle](https://sparkle-project.org) and is
-installed through a Homebrew tap. A release is: bump the version → build &
-notarize a DMG → regenerate `appcast.xml` → publish a GitHub release. The
-Homebrew cask then updates itself via the `update-cask.yml` workflow.
+installed through a Homebrew cask (this repo is the tap). A release is: bump the
+version → build & notarize a DMG → regenerate `appcast.xml` → publish a GitHub
+release. The cask then updates itself via the `update-cask.yml` workflow.
 
 Everything below is done **once**, except the per-release steps.
 
 ## One-time setup
 
-### 1. GitHub repo and tap
+### 1. GitHub repo (this repo is also the Homebrew tap)
 
 - Push this repo to `github.com/rGradov/lanki`.
-- Follow `homebrew/README.md` to create the `rGradov/homebrew-tap` repo and
-  add the `HOMEBREW_TAP_TOKEN` secret to this repo.
+- The cask lives at `Casks/lanki.rb` in this repo, so users install with
+  `brew tap rGradov/lanki && brew install --cask lanki`. No separate tap repo or
+  secret is needed — `update-cask.yml` commits back to this repo using its own
+  `GITHUB_TOKEN` (it has `contents: write`).
 
 ### 2. Sparkle signing keys
 
