@@ -4,8 +4,9 @@
 # Usage: ./scripts/make-dmg.sh <version> [path-to-Lanki.app]
 # Example: ./scripts/make-dmg.sh 1.0.0 /tmp/lanki-release/Lanki.app
 #
-# Prints the edSignature, length and sha256 needed for the appcast entry
-# (Sparkle's `generate_appcast` computes these itself — see RELEASE.md).
+# Prints the build number and sha256 (the Homebrew cask needs the sha256).
+# The Sparkle appcast is generated separately by `generate_appcast` — see
+# RELEASE.md. It signs with the private key stored in your macOS Keychain.
 #
 # This script only works once you have a Developer ID Application certificate
 # and a notarytool keychain profile set up. Until then, the early checks will
@@ -21,7 +22,6 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # --- find-identity -v -p codesigning` prints for your Developer ID cert.
 IDENTITY="${DEVELOPER_ID_IDENTITY:-Developer ID Application: Your Name (TEAMID)}"
 NOTARY_PROFILE="${NOTARY_PROFILE:-lanki-notary}"
-ED_KEY_FILE="${ED_KEY_FILE:-$REPO_ROOT/dsa_priv.pem}"
 OUT_DIR="$HOME/Downloads/Lanki"
 DMG="$OUT_DIR/Lankiv${VERSION}.dmg"
 STAGING="$(mktemp -d)/staging"
@@ -104,14 +104,10 @@ xcrun stapler staple "$DMG"
 spctl -a -t open --context context:primary-signature -vv "$DMG"
 
 echo
-echo "==> Appcast values"
-if command -v generate_appcast >/dev/null 2>&1 && [ -f "$ED_KEY_FILE" ]; then
-  generate_appcast --ed-key-file "$ED_KEY_FILE" "$DMG"
-else
-  echo "No Sparkle tool or key found. Install Sparkle (`brew install --cask sparkle`)" >&2
-  echo "and set ED_KEY_FILE to your private key, then run generate_appcast on the DMG" >&2
-  echo "(see RELEASE.md)." >&2
-fi
+echo "==> Release values"
 echo "sparkle:version: $APP_BUILD"
 echo "sha256: $(shasum -a 256 "$DMG" | awk '{print $1}')"
 echo "dmg:    $DMG"
+echo
+echo "Next: copy this DMG into a release folder and run generate_appcast on that"
+echo "folder to (re)generate appcast.xml (see RELEASE.md step 4)."

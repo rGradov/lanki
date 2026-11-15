@@ -40,6 +40,6 @@
 	<key>SUFeedURL</key>
 	<string>https://raw.githubusercontent.com/rGradov/lanki/main/appcast.xml</string>
 	<key>SUPublicEDKey</key>
-	<string>PASTE_YOUR_SPARKLE_ED25519_PUBLIC_KEY_HERE</string>
+	<string>wofyjXtCbr2tLTjYA2rFBhEfTwWJhTkmEdHG+kKbdWs=</string>
 </dict>
 </plist>
