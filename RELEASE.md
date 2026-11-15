@@ -45,21 +45,25 @@ replacing `PASTE_YOUR_SPARKLE_ED25519_PUBLIC_KEY_HERE`.
 
 ### 3. Apple Developer ID (signing + notarization)
 
-Create a **Developer ID Application** certificate in Xcode (Settings → Accounts
-→ Manage Certificates). Then create a notarytool keychain profile once:
+You already have a **Developer ID Application** certificate (`Developer ID
+Application: Uladzislau Rudzenia (97S3QGCCV4)`), so only the notarytool profile
+is missing. Generate an **app-specific password** at
+https://account.apple.com → Sign-In and Security → App-Specific Passwords, then:
 
 ```bash
 xcrun notarytool store-credentials lanki-notary \
-  --apple-id "you@example.com" \
-  --team-id "YOURTEAMID" \
-  --password "app-specific-password"
+  --apple-id "your-developer-apple-id@example.com" \
+  --team-id "97S3QGCCV4" \
+  --password "xxxx-xxxx-xxxx-xxxx"
 ```
+
+Use the Apple ID you log into developer.apple.com with (team id `97S3QGCCV4`)
+and the app-specific password as `--password`.
 
 Export your identity and set it in the release shell:
 
 ```bash
-security find-identity -v -p codesigning   # find the "Developer ID Application" string
-export DEVELOPER_ID_IDENTITY="Developer ID Application: Your Name (TEAMID)"
+export DEVELOPER_ID_IDENTITY="Developer ID Application: Uladzislau Rudzenia (97S3QGCCV4)"
 export NOTARY_PROFILE="lanki-notary"
 ```
 
@@ -77,9 +81,9 @@ export NOTARY_PROFILE="lanki-notary"
    ```bash
    xcodebuild archive -project Lanki.xcodeproj -scheme Lanki \
      -configuration Release -archivePath build/Lanki.xcarchive \
-     CODE_SIGN_IDENTITY="$DEVELOPER_ID_IDENTITY" DEVELOPMENT_TEAM="YOURTEAMID"
+     CODE_SIGN_IDENTITY="$DEVELOPER_ID_IDENTITY" DEVELOPMENT_TEAM="97S3QGCCV4"
 
-   # ExportOptions.plist: { "method": "developer-id", "teamID": "YOURTEAMID",
+   # ExportOptions.plist: { "method": "developer-id", "teamID": "97S3QGCCV4",
    #   "signingStyle": "manual",
    #   "signingCertificate": "Developer ID Application" }
    xcodebuild -exportArchive -archivePath build/Lanki.xcarchive \
@@ -91,17 +95,17 @@ export NOTARY_PROFILE="lanki-notary"
 3. **Build and notarize the DMG**, and print the release values (sha256, build):
 
    ```bash
-   ./scripts/make-dmg.sh 1.0.0 build/export/Lanki.app
+   ./scripts/make-dmg.sh 2.0.0 build/export/Lanki.app
    ```
 
 4. **Regenerate the appcast** (this also signs the DMG for Sparkle):
 
    ```bash
-   # Put the DMG (and an optional Lankiv1.0.0.md release-notes file) in a folder.
+   # Put the DMG (and an optional Lankiv2.0.0.md release-notes file) in a folder.
    mkdir -p "$HOME/Downloads/Lanki/feed"
-   cp "$HOME/Downloads/Lanki/Lankiv1.0.0.dmg" "$HOME/Downloads/Lanki/feed/"
+   cp "$HOME/Downloads/Lanki/Lankiv2.0.0.dmg" "$HOME/Downloads/Lanki/feed/"
    ~/Sparkle/bin/generate_appcast \
-     --download-url-prefix "https://github.com/rGradov/lanki/releases/download/v1.0.0/" \
+     --download-url-prefix "https://github.com/rGradov/lanki/releases/download/v2.0.0/" \
      -o appcast.xml \
      "$HOME/Downloads/Lanki/feed/"
    ```
@@ -109,8 +113,8 @@ export NOTARY_PROFILE="lanki-notary"
    Commit and push the generated `appcast.xml`.
 
 5. **Publish the GitHub release**:
-   - Tag: `v1.0.0` (must match `MARKETING_VERSION` with a leading `v`).
-   - Attach `Lankiv1.0.0.dmg` and a `Lankiv1.0.0.dmg.sha256` containing
+   - Tag: `v2.0.0` (must match `MARKETING_VERSION` with a leading `v`).
+   - Attach `Lankiv2.0.0.dmg` and a `Lankiv2.0.0.dmg.sha256` containing
      `shasum -a 256` of the DMG.
    - On `released`, `update-cask.yml` updates the Homebrew cask automatically.
 
